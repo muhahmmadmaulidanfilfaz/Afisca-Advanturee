@@ -15,7 +15,12 @@
             overflow: hidden;
         }
         canvas {
-            /* Hapus background-color di sini karena kita akan pakai gambar */
+            display: block;
+            /* Tambahkan dua baris di bawah ini agar pas di layar HP */
+            max-width: 100%;    
+            max-height: 90vh;  
+            
+            margin: auto;
             border-bottom: 2px solid #535353;
         }
         .score-board {
@@ -40,6 +45,17 @@
 
         canvas.width = 800;
         canvas.height = 200;
+        
+        // Fungsi agar game pas di layar HP
+        function resizeCanvas() {
+            const displayWidth = window.innerWidth;
+            const displayHeight = window.innerHeight;
+            
+            // Kita tetap pakai 800x200 sebagai area gambar, 
+            // tapi CSS di atas yang akan menariknya agar pas di layar.
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
         // --- PERUBAHAN BARU: LOAD GAMBAR BARU ---
         const nailongImg = new Image();
@@ -59,13 +75,14 @@
         let gameSpeed = 5;
         let gameStarted = false; // <-- Tambahkan di sini
         let isGameOver = false;
+        let isWin = false;
         let animationId;
 
         const dino = {
             x: 50,
             y: 110,
-            width: 60,
-            height: 60,
+            width: 80,
+            height: 90,
             
             frameCount: 5,      
             currentFrame: 0,    
@@ -131,6 +148,7 @@
                 requestAnimationFrame(update); // Ini menjaga agar input tetap terdeteksi
                 return;
             }
+            if (isGameOver || isWin) return;
         if (isGameOver) return;
             // --- PERUBAHAN BARU: Menggambar latar belakang ---
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -183,6 +201,9 @@
                     obstacles.splice(index, 1);
                     score++;
                     scoreEl.innerText = score.toString().padStart(5, '0');
+                    if (score >= 5) { // Kamu bisa ganti 50 dengan angka lain
+                        gameWin();
+                    }
                     if (score % 10 === 0) gameSpeed += 0.2;
                 }
 
@@ -217,6 +238,26 @@
             ctx.font = "15px Courier New";
             ctx.fillText("Tekan Enter untuk Bangun Lagi", canvas.width/2 - 130, canvas.height/2 + 40);
         }
+        function gameWin() {
+            isWin = true;
+            cancelAnimationFrame(animationId);
+            
+            // Tampilan Kemenangan di Layar
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.7)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.textAlign = "center";
+            ctx.font = "bold 25px Courier New";
+            ctx.fillText("SELAMAT! KAMU MENANG! 🎉", canvas.width/2, canvas.height/2 - 20);
+            ctx.font = "15px Courier New";
+            ctx.fillText("Satu detik lagi, hadiahmu akan muncul...", canvas.width/2, canvas.height/2 + 20);
+
+            // FITUR HADIAH: Beralih ke website lain setelah 3 detik
+            setTimeout(() => {
+                window.location.href = "hadiah.html"; 
+            }, 3000); // 3000 artinya menunggu 3 detik sebelum pindah
+        }
+    
         function drawStartScreen() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
@@ -239,7 +280,9 @@
             ctx.font = "18px Courier New";
             ctx.fillText("Klik atau Sentuh Layar", canvas.width/2, canvas.height/2 + 25);
             ctx.fillText("Untuk Memulai & Melompat", canvas.width/2, canvas.height/2 + 55);
-            ctx.fillText("Semangaaaat Adeeek Sayaaang :)", canvas.width/2, canvas.height/2 + 75);
+
+            ctx.font = "italic 15px Courier New"; // Opsional: buat sedikit miring dan kecil
+            ctx.fillText("Semangaaaat Adeeek Sayaaaang :)", canvas.width/2, canvas.height/2 + 85);
             
             
             ctx.textAlign = "left";
@@ -250,6 +293,7 @@
             obstacles.length = 0;
             gameSpeed = 5;
             isGameOver = false;
+            isWin = false;
             dino.y = 140;
             backgroundX = 0; // Reset posisi background
             update();
