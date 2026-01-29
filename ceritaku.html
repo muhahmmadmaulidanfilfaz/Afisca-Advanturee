@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBD Adek Sayang ❤️</title>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
+
+    body {
+        margin: 0;
+        background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* Senada dengan Canva */
+        color: white;
+        font-family: 'Poppins', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        min-height: 100vh;
+    }
+
+    .container {
+        max-width: 600px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 40px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        margin-top: 50px;
+        text-align: center;
+    }
+
+    /* Judul Utama: Ganti jadi Kuning Emas Lembut */
+    h1 {
+        font-family: 'Dancing Script', cursive;
+        font-size: 3.5rem;
+        color: #f1c40f; 
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 15px rgba(241, 196, 15, 0.4);
+    }
+
+    /* Teks Cerita: Putih Bersih agar mudah dibaca */
+    .story-text {
+        font-size: 16px;
+        line-height: 1.9;
+        text-align: justify;
+        margin-bottom: 25px;
+        color: #ffffff; 
+    }
+
+    /* Bagian Penting: Ganti jadi Biru Langit Cerah agar kontras */
+    .highlight {
+        color: #00d2ff; 
+        font-weight: 600;
+        text-decoration: underline;
+    }
+
+    /* Harapan di bawah: Kuning Emas Lembut */
+    .footer-wish {
+        font-family: 'Dancing Script', cursive;
+        font-size: 1.8rem;
+        color: #f1c40f; 
+        margin-top: 30px;
+        line-height: 1.4;
+    }
+
+    .btn-home {
+        margin-top: 30px;
+        display: inline-block;
+        padding: 12px 30px;
+        background: #00d2ff; /* Senada dengan highlight */
+        color: #0f2027;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .btn-home:hover {
+        transform: scale(1.1);
+        background: #ffffff;
+    }
+</style>
+</head>
+<body>
+    <div class="stars"></div>
+
+    <div class="container">
+        <h1>Selamat Ulang Tahun</h1>
+        <p style="font-weight: 600;">Untuk Adeeek, Calon Istrinya Mamas</p>
+        
+        <div class="story-text">
+            "Hari itu aku bertemu dengan seorang guru baru, diaa.. memiliki sesuatu yang bisa merubah rasa ketidak pedulianku terhadap manusia. 
+            Aku ingin mengenalnya lebih jauh tapi sayangnya dia sudah memiliki kekasih, kebetulan saat itu aku dan dia sama-sama ditunjuk sebagai pembina di <span class="highlight">ekskul pramuka</span>. 
+            Selama pembelajaran ekskul kami mulai dekat, kebetulan saat itu ada event kemah pramuka aku dan dia ditugaskan untuk mengurus administrasi siswa. 
+            Saat itu kami mulai dekat dan disitu aku baru tahu bahwa dia sudah tidak memiliki kekasih. 
+            Jujur aku turut senang mendengarnya karena saat dia bilang begitu, otak dan hatiku berkata <span class="highlight">'wahh sekarang waktu yang tepat filfaz buat ngelindungin dia dan membuat dia nyaman mwehehehehe'</span>. 
+            Setelah itu aku bertekad untuk mendekati dia sampai pada suatu malam aku mengungkapkan keinginanku untuk serius dengan dia, untuk menghadap orang tuanya. 
+            Saat itu dia menerima tapi tidak sepenuhnya menerima, dia bilang untuk saling kenal dulu... Sampai pada akhir Desember dan awal Januari aku melamar dia tepatnya pada <span class="highlight">tanggal 5 Januari 2026</span>. 
+            Terimakasih sayaang sudah menerima mamas."
+        </div>
+
+        <div class="footer-wish">
+            "Selamat ulang tahuun semoga apa yang adek inginkan tahun ini Allah kabulkan... 
+            Sehat selalu dan tetap menjadi kesayangane mamas.. 
+            Love you all adeeek Afisca Indah Nuzulul Laila 🫶🏽🫶🏽🫶🏽"
+             
+        </div>
+
+        <a href="index.html" class="btn-home">Kembali ke Beranda</a>
+    </div>
+
+    <audio id="myAudio" loop>
+    <source src="lagu_romantis.mp3" type="audio/mpeg">
+    Browser kamu tidak mendukung pemutar musik.
+</audio>
+
+<div id="music-control" onclick="toggleMusic()" style="position: fixed; bottom: 20px; right: 20px; background: #f1c40f; padding: 10px; border-radius: 50%; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1000;">
+    <span id="music-icon">🎵</span>
+</div>
+
+<script>
+    const audio = document.getElementById("myAudio");
+    const icon = document.getElementById("music-icon");
+
+    function toggleMusic() {
+        if (audio.paused) {
+            audio.play();
+            icon.innerHTML = "⏸️"; // Berubah jadi ikon pause saat musik jalan
+        } else {
+            audio.pause();
+            icon.innerHTML = "🎵"; // Kembali jadi ikon musik saat berhenti
+        }
+    }
+
+    // Trik agar musik langsung jalan saat Adek menyentuh layar pertama kali
+    document.addEventListener('click', function() {
+        audio.play();
+        icon.innerHTML = "⏸️";
+    }, { once: true }); 
+</script>
+</body>
+</html>
