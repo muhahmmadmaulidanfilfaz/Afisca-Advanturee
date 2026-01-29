@@ -3,343 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nailong di Taman Bermain</title>
+    <title>Website Pertamaku</title>
+
     <style>
         body {
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: 'Courier New', Courier, monospace;
-            overflow: hidden;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f6f8;
         }
-        canvas {
-            display: block;
-            /* Tambahkan dua baris di bawah ini agar pas di layar HP */
-            max-width: 100%;    
-            max-height: 80vh;  
-            
-            margin: auto;
-            border-bottom: 2px solid #535353;
+
+        header {
+            background-color: #2c7be5;
+            color: white;
+            padding: 20px;
+            text-align: center;
         }
-        .score-board {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 20px;
-            color: #535353;
+
+        nav {
+            background-color: #1a5fb4;
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        footer {
+            background-color: #2c7be5;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
         }
     </style>
 </head>
+
 <body>
 
-    <div class="score-board">HI <span id="highScore">00000</span> <span id="currentScore">00000</span></div>
-    <canvas id="game"></canvas>
+    <header>
+        <h1>Selamat Datang di Website Afisca</h1>
+        <p>Website HTML Sederhana
+        </p>
+    </header>
 
-    <script>
-        const canvas = document.getElementById('game');
-        const ctx = canvas.getContext('2d');
-        const scoreEl = document.getElementById('currentScore');
-        const highScoreEl = document.getElementById('highScore');
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#tentang">Tentang</a>
+        <a href="#Game">Kontak</a>
+    </nav>
 
-        canvas.width = 800;
-        canvas.height = 300;
+    <div class="container">
+
+        <div class="card" id="home">
+            <h2>Home</h2>
+            <p>Ini adalah website HTML pertama Afisca. Website ini dibuat belajar HTML dan CSS.</p>
+        </div>
         
-        // Fungsi agar game pas di layar HP
-        function resizeCanvas() {
-            const displayWidth = window.innerWidth;
-            const displayHeight = window.innerHeight;
-            
-            // Kita tetap pakai 800x200 sebagai area gambar, 
-            // tapi CSS di atas yang akan menariknya agar pas di layar.
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
 
-        // --- PERUBAHAN BARU: LOAD GAMBAR BARU ---
-        const nailongImg = new Image();
-        nailongImg.src = 'Nailong.png'; // Pastikan ini sesuai dengan nama file spritesheet Nailong kamu
-
-        const bgImg = new Image();
-        bgImg.src = 'background_taman.jpg'; // Nama file gambar latar belakang taman kamu
-
-        const obstacleImg = new Image();
-        obstacleImg.src = 'rintangan_lucu.png'; // Nama file gambar rintangan lucu kamu
-        // ----------------------------------------
-
-        let score = 0;
-        let highScore = localStorage.getItem('dinoHighScore') || 0;
-        highScoreEl.innerText = highScore.toString().padStart(5, '0');
-        
-        let gameSpeed = 5;
-        let gameStarted = false; // <-- Tambahkan di sini
-        let isGameOver = false;
-        let isWin = false;
-        let animationId;
-
-        const dino = {
-            x: 50,
-            y: 210,
-            width: 90,
-            height: 90,
-            
-            frameCount: 5,      
-            currentFrame: 0,    
-            frameTick: 0,       
-            
-            dy: 0,
-            jumpForce: 12,
-            gravity: 0.6,
-            grounded: false,
-
-            draw() {
-                if (nailongImg.complete) {
-                    if (this.grounded) {
-                        this.frameTick++;
-                        if (this.frameTick > 6) { 
-                            this.currentFrame = (this.currentFrame + 1) % this.frameCount;
-                            this.frameTick = 0;
-                        }
-                    } else {
-                        this.currentFrame = 0; 
-                    }
-
-                    let spriteWidth = nailongImg.width / this.frameCount;
-
-                    ctx.drawImage(
-                        nailongImg, 
-                        this.currentFrame * spriteWidth, 0, 
-                        spriteWidth, nailongImg.height,    
-                        this.x, this.y,                    
-                        this.width, this.height            
-                    );
-                }
-            },
-            jump() {
-                if (this.grounded) {
-                    this.dy = -this.jumpForce;
-                    this.grounded = false;
-                }
-            }
-        };
-
-        const obstacles = [];
-        // --- PERUBAHAN BARU: SPESIFIKASI RINTANGAN ---
-        function spawnObstacle() {
-            let height = Math.random() * (60 - 20) + 20; // Ukuran rintangan bervariasi
-            obstacles.push({
-                x: canvas.width,
-                y: canvas.height - height,
-                width: 40, // Lebar rintangan
-                height: height // Tinggi rintangan
-            });
-        }
-        // ----------------------------------------------
-
-        let spawnTimer = 0;
-        // --- PERUBAHAN BARU: Variabel untuk menggeser latar belakang ---
-        let backgroundX = 0;
-        // -------------------------------------------------------------
-
-       function update() {
-            if (!gameStarted) {
-                drawStartScreen();
-                requestAnimationFrame(update); // Ini menjaga agar input tetap terdeteksi
-                return;
-            }
-            if (isGameOver || isWin) return;
-        if (isGameOver) return;
-            // --- PERUBAHAN BARU: Menggambar latar belakang ---
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Menggambar latar belakang taman
-            if (bgImg.complete) {
-                // Gambar dua kali untuk efek scroll tak terbatas
-                ctx.drawImage(bgImg, backgroundX, 0, canvas.width, canvas.height);
-                ctx.drawImage(bgImg, backgroundX + canvas.width, 0, canvas.width, canvas.height);
-            } else {
-                ctx.fillStyle = "#A7D9FD"; // Fallback warna langit
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            }
-            // Menggeser latar belakang
-            backgroundX -= gameSpeed * 0.5; // Kecepatan scroll latar belakang
-            if (backgroundX <= -canvas.width) {
-                backgroundX = 0;
-            }
-            // -------------------------------------------------
-
-            dino.y += dino.dy;
-            if (dino.y + dino.height < canvas.height) {
-                dino.dy += dino.gravity;
-                dino.grounded = false;
-            } else {
-                dino.y = canvas.height - dino.height;
-                dino.dy = 0;
-                dino.grounded = true;
-            }
-            dino.draw();
-
-            spawnTimer++;
-            if (spawnTimer > Math.random() * (120 - 60) + 60) {
-                spawnObstacle();
-                spawnTimer = 0;
-            }
-
-            obstacles.forEach((obs, index) => {
-                obs.x -= gameSpeed;
-                // --- PERUBAHAN BARU: Menggambar rintangan lucu ---
-                if (obstacleImg.complete) {
-                    ctx.drawImage(obstacleImg, obs.x, obs.y, obs.width, obs.height);
-                } else {
-                    ctx.fillStyle = "brown"; // Fallback jika gambar rintangan belum loading
-                    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
-                }
-                // -------------------------------------------------
-
-                if (obs.x + obs.width < 0) {
-                    obstacles.splice(index, 1);
-                    score++;
-                    scoreEl.innerText = score.toString().padStart(5, '0');
-                    if (score >= 5) { // Kamu bisa ganti 50 dengan angka lain
-                        gameWin();
-                    }
-                    if (score % 10 === 0) gameSpeed += 0.2;
-                }
-
-                // Collision Detection tetap sama
-                if (
-                    dino.x < obs.x + obs.width &&
-                    dino.x + dino.width > obs.x &&
-                    dino.y < obs.y + obs.height &&
-                    dino.y + dino.height > obs.y
-                ) {
-                    gameOver();
-                }
-            });
-
-            animationId = requestAnimationFrame(update);
-        }
-
-        function gameOver() {
-            
-            isGameOver = true;
-            cancelAnimationFrame(animationId);
-            if (score > highScore) {
-                highScore = score;
-                localStorage.setItem('dinoHighScore', highScore);
-                highScoreEl.innerText = highScore.toString().padStart(5, '0');
-            }
-            ctx.fillStyle = 'rgba(0,0,0,0.5)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'white';
-            ctx.font = "30px Courier New";
-            ctx.fillText("NAILONG TERJATUH DI TAMAN!", canvas.width/2 - 200, canvas.height/2); // Pesan Game Over baru
-            ctx.font = "15px Courier New";
-            ctx.fillText("Tekan Enter untuk Bangun Lagi", canvas.width/2 - 130, canvas.height/2 + 40);
-        }
-        function gameWin() {
-            isWin = true;
-            cancelAnimationFrame(animationId);
-            
-            // Tampilan Kemenangan di Layar
-            ctx.fillStyle = 'rgba(255, 215, 0, 0.7)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'white';
-            ctx.textAlign = "center";
-            ctx.font = "bold 25px Courier New";
-            ctx.fillText("SELAMAT! KAMU MENANG! 🎉", canvas.width/2, canvas.height/2 - 20);
-            ctx.font = "15px Courier New";
-            ctx.fillText("Satu detik lagi, hadiahmu akan muncul...", canvas.width/2, canvas.height/2 + 20);
-
-            // FITUR HADIAH: Beralih ke website lain setelah 3 detik
-            setTimeout(() => {
-                window.location.href = "hadiah.html"; 
-            }, 3000); // 3000 artinya menunggu 3 detik sebelum pindah
-        }
+        <div class="card" id="tentang">
+            <h2>Tentang Afisca</h2>
+            <h3>Afisca Sudah Punya Calon Namanya Filfaz</h3>
     
-        function drawStartScreen() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Gambar background agar tidak kosong
-            if (bgImg.complete) {
-                ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
-            }
+    <div style="margin-top: 20px;">
+        <a href="https://gamepenjumlahan.my.canva.site/buat-kamu" target="_blank" class="btn-love">
+            <h3>Klik Ini Untukmu</h3>
+        </a>
+    </div>
+</div>
 
-            // Kotak transparan untuk teks
-            ctx.fillStyle = 'rgba(0,0,0,0.6)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        <div class="card" id="Game">
+            <h2>Game nailong</h2>
+           <div style="text-align: center; margin-top: 30px;">
+    <a href="game.html" class="btn-game">MULAI PETUALANGAN NAILONG! 🦖</a>
+</div>
 
-            // Teks Pemberitahuan
-            ctx.fillStyle = 'white';
-            ctx.textAlign = "center";
-            ctx.font = "bold 30px Courier New";
-            ctx.fillText("PETUALANGAN NAILONG", canvas.width/2, canvas.height/2 - 20);
-            
-            
-            ctx.font = "18px Courier New";
-            ctx.fillText("Klik atau Sentuh Layar", canvas.width/2, canvas.height/2 + 25);
-            ctx.fillText("Untuk Memulai & Melompat", canvas.width/2, canvas.height/2 + 55);
-
-            ctx.font = "italic 15px Courier New"; // Opsional: buat sedikit miring dan kecil
-            ctx.fillText("Semangaaaat Adeeek Sayaaaang :)", canvas.width/2, canvas.height/2 + 85);
-            
-            
-            ctx.textAlign = "left";
-        }
-        function resetGame() {
-            score = 0;
-            scoreEl.innerText = "00000";
-            obstacles.length = 0;
-            gameSpeed = 5;
-            isGameOver = false;
-            isWin = false;
-            dino.y = 140;
-            backgroundX = 0; // Reset posisi background
-            update();
-        }
-
-       // Fungsi untuk menangani input (Klik/Sentuh/Keyboard)
-        function handleInput() {
-            if (!gameStarted) {
-                gameStarted = true;
-            } else if (isGameOver) {
-                resetGame();
-                gameStarted = true; // Langsung mulai lagi setelah reset
-            } else {
-                dino.jump(); // Lompat jika game sedang berjalan
-            }
-        }
-
-        // Jalankan handleInput saat Klik Mouse atau Sentuh Layar
-        window.addEventListener('mousedown', handleInput);
-        window.addEventListener('touchstart', handleInput);
-
-        // Tetap dukung Keyboard (Spasi/Enter/Atas)
-        window.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'Enter') {
-                handleInput();
-            }
-        });
-
-        // Tunggu semua gambar load baru mulai game
-        let imagesLoaded = 0;
-        const totalImages = 3; // nailong, bg, obstacle
-
-        nailongImg.onload = () => { imagesLoaded++; checkAllImagesLoaded(); };
-        bgImg.onload = () => { imagesLoaded++; checkAllImagesLoaded(); };
-        obstacleImg.onload = () => { imagesLoaded++; checkAllImagesLoaded(); };
-
-        function checkAllImagesLoaded() {
-            if (imagesLoaded === totalImages) {
-                update();
-            }
-        }
-        // Jika browser sudah cache, mungkin onload tidak terpanggil.
-        // Panggil checkAllImagesLoaded sekali di awal jika semua sudah ready.
-        if (nailongImg.complete && bgImg.complete && obstacleImg.complete) {
-            checkAllImagesLoaded();
-        }
-    </script>
-</body>
-</html>
+<style>
+    .btn-game {
+        display: inline-block;
+        padding: 15px 30px;
+        background-color: #ff4d8d; /* Warna pink ceria */
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        transition: transform 0.3s;
+    }
+    .btn-game:hover {
+        transform: scale(1.1);
+    }
+</style>
