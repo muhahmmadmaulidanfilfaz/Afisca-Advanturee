@@ -18,7 +18,7 @@
             display: block;
             /* Tambahkan dua baris di bawah ini agar pas di layar HP */
             max-width: 100%;    
-            max-height: 90vh;  
+            max-height: 80vh;  
             
             margin: auto;
             border-bottom: 2px solid #535353;
@@ -44,7 +44,7 @@
         const highScoreEl = document.getElementById('highScore');
 
         canvas.width = 800;
-        canvas.height = 200;
+        canvas.height = 300;
         
         // Fungsi agar game pas di layar HP
         function resizeCanvas() {
@@ -80,8 +80,8 @@
 
         const dino = {
             x: 50,
-            y: 110,
-            width: 80,
+            y: 210,
+            width: 90,
             height: 90,
             
             frameCount: 5,      
@@ -127,7 +127,7 @@
         const obstacles = [];
         // --- PERUBAHAN BARU: SPESIFIKASI RINTANGAN ---
         function spawnObstacle() {
-            let height = Math.random() * (40 - 20) + 20; // Ukuran rintangan bervariasi
+            let height = Math.random() * (60 - 20) + 20; // Ukuran rintangan bervariasi
             obstacles.push({
                 x: canvas.width,
                 y: canvas.height - height,
